@@ -659,7 +659,7 @@ public class Camera2BasicFragment extends Fragment
       return;
     }
     Bitmap bitmap =
-        textureView.getBitmap(ImageClassifier.DIM_IMG_SIZE_X, ImageClassifier.DIM_IMG_SIZE_Y);
+        textureView.getBitmap(ImageClassifier.DIM_WINDOW_WIDTH, ImageClassifier.DIM_ACCELEROMETER);
     String textToShow = classifier.classifyFrame(bitmap);
     bitmap.recycle();
     showToast(textToShow);

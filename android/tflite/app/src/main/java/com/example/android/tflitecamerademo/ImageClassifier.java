@@ -43,7 +43,7 @@ public class ImageClassifier {
   private static final String TAG = "TfLiteCameraDemo";
 
   /** Name of the model file stored in Assets. */
-  private static final String MODEL_PATH = "graph.lite";
+  private static final String MODEL_PATH = "20-20_120_1_0.01_0.95.tflite";
 
   /** Name of the label file stored in Assets. */
   private static final String LABEL_PATH = "labels.txt";
@@ -54,17 +54,15 @@ public class ImageClassifier {
   /** Dimensions of inputs. */
   private static final int DIM_BATCH_SIZE = 1;
 
-  private static final int DIM_PIXEL_SIZE = 3;
-
-  static final int DIM_IMG_SIZE_X = 224;
-  static final int DIM_IMG_SIZE_Y = 224;
+  static final int DIM_WINDOW_WIDTH = 120;
+  static final int DIM_ACCELEROMETER = 3;
 
   private static final int IMAGE_MEAN = 128;
   private static final float IMAGE_STD = 128.0f;
 
 
   /* Preallocated buffers for storing image data in. */
-  private int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y];
+  private int[] intValues = new int[DIM_WINDOW_WIDTH * DIM_ACCELEROMETER];
 
   /** An instance of the driver class to run model inference with Tensorflow Lite. */
   private Interpreter tflite;
@@ -98,7 +96,7 @@ public class ImageClassifier {
     labelList = loadLabelList(activity);
     imgData =
         ByteBuffer.allocateDirect(
-            4 * DIM_BATCH_SIZE * DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE);
+            4 * DIM_BATCH_SIZE * DIM_WINDOW_WIDTH * DIM_ACCELEROMETER);
     imgData.order(ByteOrder.nativeOrder());
     labelProbArray = new float[1][labelList.size()];
     filterLabelProbArray = new float[FILTER_STAGES][labelList.size()];
@@ -111,7 +109,7 @@ public class ImageClassifier {
       Log.e(TAG, "Image classifier has not been initialized; Skipped.");
       return "Uninitialized Classifier.";
     }
-    convertBitmapToByteBuffer(bitmap);
+//    convertBitmapToByteBuffer(bitmap);
     // Here's where the magic happens!!!
     long startTime = SystemClock.uptimeMillis();
     tflite.run(imgData, labelProbArray);
@@ -190,8 +188,8 @@ public class ImageClassifier {
     // Convert the image to floating point.
     int pixel = 0;
     long startTime = SystemClock.uptimeMillis();
-    for (int i = 0; i < DIM_IMG_SIZE_X; ++i) {
-      for (int j = 0; j < DIM_IMG_SIZE_Y; ++j) {
+    for (int i = 0; i < DIM_WINDOW_WIDTH; ++i) {
+      for (int j = 0; j < DIM_ACCELEROMETER; ++j) {
         final int val = intValues[pixel++];
         imgData.putFloat((((val >> 16) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
         imgData.putFloat((((val >> 8) & 0xFF)-IMAGE_MEAN)/IMAGE_STD);
